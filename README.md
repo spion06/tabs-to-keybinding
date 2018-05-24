@@ -10,6 +10,8 @@ ruby parse_tab_sheet.rb <path to tabs> [path to mapping yaml]
 ## tabs format
 tabs must have the first column be the tuning of the string. this can be an integer offset or the actual note. if an actual note is used then a mapping file should be passed as an argument so the offsets can be matched. Offsets can be negative. 
 
+each measure should be separated by 2 lines 
+
 tabs with note tuning
 ```
 e|------------------------------------------------------------------|
