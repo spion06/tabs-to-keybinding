@@ -15,12 +15,30 @@ def scale_to_offset(key)
   end
 end
 
+def fix_double_digits(input)
+  idxs = input.map.with_index{|n,i| i if n.match(/\d{2,}/)}.compact
+  idxs.each_with_index do |idx,offset|
+    insert_idx = idx + offset + 1
+    input.insert(insert_idx,'-')
+  end
+  input
+end
+
+def valid_tabs?(lines)
+  lines.map{|l| l[:tabs].count }.uniq.count == 1
+end
+
 all_segments = []
 segments.each do |segment|
-  lines = segment.split("\n").map{|l| { scale: scale_to_offset(l.split('|')[0]), tabs: l.match(/\|(.*)\|/)[1] }}
-  if lines.map{|l| l[:tabs].length }.uniq.count > 1
-    raise "error parsing segment. characters per segment
-    #{lines.map{|l| l[:tabs].length }.inspect} #{segment}"
+  lines = segment.split("\n").map{|l| { scale: scale_to_offset(l.split('|')[0]), tabs: l.match(/\|(.*)\|/)[1].scan(/(\d+|[a-z\/-])/).flatten }}
+  unless valid_tabs?(lines)
+    lines.each do |line|
+      line[:tabs] = fix_double_digits(line[:tabs])
+    end
+    unless valid_tabs?(lines)
+      raise "error parsing segment. characters per segment
+        #{lines.map{|l| l[:tabs].count }.inspect} #{segment}"
+    end
   end
   vert_segments = lines.map{|l| l[:tabs].length }.first
   converted_segment = []
