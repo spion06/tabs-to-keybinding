@@ -31,7 +31,6 @@ end
 all_segments = []
 segments.each do |segment|
   lines = segment.split("\n").map{|l| { scale: scale_to_offset(l.split('|')[0]), tabs: l.match(/\|(.*)\|/)[1].scan(/(\d+|[a-z\/-])/).flatten }}
-  puts lines.inspect
   unless valid_tabs?(lines)
     lines.each do |line|
       line[:tabs] = fix_double_digits(line[:tabs])
