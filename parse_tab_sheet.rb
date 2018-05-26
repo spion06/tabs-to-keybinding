@@ -50,10 +50,11 @@ end
 
 segments = File.read(ARGV[0]).split(/\n\s*\n/)
 all_segments = []
-segments.each do |segment|
+segments.each_with_index do |segment,s_idx|
   begin
   lines = segment.split("\n").map{|l| { scale: scale_to_offset(l.split('|')[0].strip), tabs: l.match(/\|(.*)\|\s*$/)[1].scan(/(\d+|[a-zA-Z\/-]| )/).flatten }}
   rescue Exception => e
+    puts "error parsing segment #{s_idx}"
     puts segment.inspect
     raise e
   end
@@ -62,7 +63,7 @@ segments.each do |segment|
       line[:tabs] = fix_double_digits(line[:tabs])
     end
     unless valid_tabs?(lines)
-      raise "error parsing segment. characters per segment
+      raise "error parsing segment #{s_idx}. characters per segment
         #{lines.map{|l| l[:tabs].count }.inspect} #{lines.map{|l| l[:tabs].join}} #{segment}"
     end
   end
