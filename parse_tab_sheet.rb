@@ -35,13 +35,17 @@ def valid_tabs?(lines)
 end
 
 def note_length_mapping(note)
-  mapping = {
-    W: 7,
-    H: 3,
-    Q: 1,
-    E: 0
-  }
-  mapping[note.to_sym].to_i
+  unless config_file['timings']
+    mapping = {
+      W: 7,
+      H: 3,
+      Q: 1,
+      E: 0
+    }
+    mapping[note.to_sym].to_i
+  else
+    config_file['timings'][note].to_i
+  end
 end
 
 segments = File.read(ARGV[0]).split(/\n\s*\n/)
