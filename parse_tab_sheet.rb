@@ -85,7 +85,7 @@ segments.each_with_index do |segment,s_idx|
         begin
           note_mapping << key_mapping.fetch(note_idx) + note_length_mapping(note_length_symbol).times.map{' '}.to_a.join
         rescue IndexError
-          raise "#{matchdata[1].to_i} + #{offset} is too high for the max value of #{key_mapping.count}"
+          raise "#{matchdata[1].to_i} + #{offset} is too high for the max value of #{key_mapping.count}. segment: #{s_idx}, line: #{l_idx}, column: #{vs_idx}"
         end
       end
     end
