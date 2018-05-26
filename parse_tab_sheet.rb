@@ -52,7 +52,7 @@ segments = File.read(ARGV[0]).split(/\n\s*\n/)
 all_segments = []
 segments.each_with_index do |segment,s_idx|
   begin
-  lines = segment.split("\n").map{|l| { scale: scale_to_offset(l.split('|')[0].strip), tabs: l.match(/\|(.*)\|\s*$/)[1].scan(/(\d+|[a-zA-Z\/-]| )/).flatten }}
+    lines = segment.split("\n").map{|l| { scale: scale_to_offset(l.split('|')[0].strip), tabs: l.match(/\|(.*)\|\s*$/)[1].scan(/(\d+|[a-zA-Z\/-]| )/).flatten }}
   rescue Exception => e
     puts "error parsing segment #{s_idx}"
     puts segment.inspect
@@ -82,7 +82,11 @@ segments.each_with_index do |segment,s_idx|
       note_length_symbol = note_length_line.nil? ? 'Z' : note_length_line[:tabs][vs_idx]
       if matchdata
         note_idx = matchdata[1].to_i + offset
-        note_mapping << key_mapping.fetch(note_idx) + note_length_mapping(note_length_symbol).times.map{' '}.to_a.join
+        begin
+          note_mapping << key_mapping.fetch(note_idx) + note_length_mapping(note_length_symbol).times.map{' '}.to_a.join
+        rescue IndexError
+          raise "#{matchdata[1].to_i} + #{offset} is too high for the max value of #{key_mapping.count}"
+        end
       end
     end
     segment_value = case note_mapping.count
