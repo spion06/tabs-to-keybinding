@@ -49,6 +49,17 @@ tabs with integer offset
 13|------------------------------------------------------------------|
 ```
 
+single measure with note tuning and timings
+```
+e|  Q Q              T  E  E                     E              E   |
+e|------------------------------------------------------------------|
+B|------------------------------------------------------------------|
+G|-----------------------------------2-2-2-2-2-0-2------------------|
+D|--0-2-2-2-2-2-0-2---0-2-2-2-2-0-2------------------0-2-2-2-2-2-0-2|
+A|-2----------------2------------------------------2----------------|
+E|------------------------------------------------------------------|
+```
+
 ## mapping yaml
 the mapping yaml takes the tunings denoted on the left of the tab and uses them later on to map to offsets
 
@@ -62,4 +73,16 @@ G: 31
 D: 26
 A: 21
 E: 13
+```
+
+the mapping yaml can also be used to denote custom timings
+
+```
+timings:
+  E: 1
+```
+
+the mapping yaml is also used to enable parsing of the top line for timings
+```
+note_length_line: true
 ```
