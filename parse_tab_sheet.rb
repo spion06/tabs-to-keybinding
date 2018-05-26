@@ -77,7 +77,7 @@ segments.each do |segment|
     note_mapping = []
     lines.each_with_index do |line,l_idx|
       offset = line[:scale]
-      matchdata = line[:tabs][vs_idx].match(/([0-9])/)
+      matchdata = line[:tabs][vs_idx].match(/([0-9]+)/)
       note_length_symbol = note_length_line.nil? ? 'Z' : note_length_line[:tabs][vs_idx]
       if matchdata
         note_idx = matchdata[1].to_i + offset
