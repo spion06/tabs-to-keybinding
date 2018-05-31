@@ -86,3 +86,9 @@ the mapping yaml is also used to enable parsing of the top line for timings
 ```
 note_length_line: true
 ```
+
+To have the script output a bardmacroplayer string
+
+```
+bard_macro_player: true
+```
