@@ -4,6 +4,8 @@ scale = %w(C C# D Eb E F F# G G# A Bb B)
 full_scale = (3.times.map { scale } + %w(C)).flatten
 key_mapping = %w(z x c v b n m a s d f g h j k l q w e r t y u i o p 1 2 3 4 5 6 7 8 9 0 -)
 
+bmp = (%w(-1 0 +1).map { |i| append = i == '0' ? '' : i; scale.map{|s| s + append } } + %w(C+2)).flatten
+
 
 
 def scale_to_offset(key)
@@ -52,6 +54,7 @@ segments = File.read(ARGV[0]).split(/\n\s*\n/)
 all_segments = []
 segments.each_with_index do |segment,s_idx|
   begin
+    next if segment.match(/^#.*/)
     lines = segment.split("\n").map{|l| { scale: scale_to_offset(l.split('|')[0].strip), tabs: l.match(/\|(.*)\|\s*$/)[1].scan(/(\d+|[a-zA-Z\/-]| )/).flatten }}
   rescue Exception => e
     puts "error parsing segment #{s_idx}"
@@ -83,7 +86,11 @@ segments.each_with_index do |segment,s_idx|
       if matchdata
         note_idx = matchdata[1].to_i + offset
         begin
-          note_mapping << key_mapping.fetch(note_idx) + note_length_mapping(note_length_symbol).times.map{' '}.to_a.join
+          if config_file['bard_macro_player']
+            note_mapping << [ " #{bmp.fetch(note_idx)} " ] +  note_length_mapping(note_length_symbol).times.map{' '}.to_a
+          else
+            note_mapping << [ key_mapping.fetch(note_idx) ] +  note_length_mapping(note_length_symbol).times.map{' '}.to_a
+          end
         rescue IndexError
           raise "#{matchdata[1].to_i} + #{offset} is too high for the max value of #{key_mapping.count}. segment: #{s_idx}, line: #{l_idx}, column: #{vs_idx}"
         end
@@ -91,7 +98,7 @@ segments.each_with_index do |segment,s_idx|
     end
     segment_value = case note_mapping.count
                     when 0
-                      config_file['note_length_line'] ? '' : '-'
+                      config_file['note_length_line'] ? '' : '|'
                     when 1
                       note_mapping.first
                     else
@@ -99,6 +106,7 @@ segments.each_with_index do |segment,s_idx|
                     end
     converted_segment << segment_value
   end
-  all_segments << converted_segment.join('').gsub('-',' ')
+  join_delim = config_file['bard_macro_player'] ? '/' : ''
+  all_segments << converted_segment.join(join_delim).gsub('|',' ')
 end
 puts all_segments.join
